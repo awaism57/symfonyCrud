@@ -2,6 +2,7 @@
 
 {% block title %}Home{% endblock %}
 
+
 {% block body %}
 
 <div class="container mt-5 mb-5"> 
@@ -18,7 +19,7 @@
     <div class="alert alert-success mt-4 mb-b"> {{ message }}</div>
     {% endfor %}
 
-    <table class="table">
+    <table id="example" class="table" style="width:100%">
         <thead>
           <tr>
             <th scope="col">ID</th>
@@ -43,4 +44,15 @@
         </tbody>
       </table>
 </div>
+
+
+
+<script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.12.1/js/dataTables.bootstrap4.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $('#example').DataTable();
+});
+</script>
 {% endblock %}
