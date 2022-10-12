@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Crud;
+use App\Entity\Logs;
 use App\Form\CrudType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,12 +28,20 @@ class MainController extends AbstractController
      */
     public function create(Request $request){
         $crud = new Crud();
+        $log = new Logs();
+        $date = date("Y-m-d H:i:s");
         $form = $this->createForm(CrudType::class, $crud);
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
             $em = $this->getDoctrine()->getManager();
             $em->persist($crud);
+            $em->flush();
+
+            $log->setaction('Record Created Succefully'.'=> ID : '.$crud->getId());
+            $log->setCreatAt($date);
+            $em->persist($log);
+            
             $em->flush();
 
             $this->addFlash('notice','Submitted Succefully!');
@@ -52,12 +61,17 @@ class MainController extends AbstractController
     public function delete($id)
     {
         $data = $this->getDoctrine()->getRepository(Crud::class)->find($id);
+        $log = new Logs();
+        $date = date("Y-m-d H:i:s");
         
         if (!$data) {
             throw $this->createNotFoundException('No Data found for id '.$id);
         }
 
         $em = $this->getDoctrine()->getManager();
+        $log->setaction('Record Deleted Succefully '.'=> ID : '.$id);
+        $log->setCreatAt($date);
+        $em->persist($log);
         $em->remove($data);
         $em->flush();
 
@@ -76,9 +90,15 @@ class MainController extends AbstractController
         $crud = $this->getDoctrine()->getRepository(Crud::class)->find($id);
         $form = $this->createForm(CrudType::class, $crud);
         $form->handleRequest($request);
+        $log = new Logs();
+        $date = date("Y-m-d H:i:s");
+    
 
         if($form->isSubmitted() && $form->isValid()){
             $em = $this->getDoctrine()->getManager();
+            $log->setaction('Record Updated Succefully '.'=> ID : '.$id);
+            $log->setCreatAt($date);
+            $em->persist($log);
             $em->persist($crud);
             $em->flush();
 
