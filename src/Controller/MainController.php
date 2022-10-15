@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Crud;
 use App\Entity\Logs;
 use App\Form\CrudType;
+use App\Services\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,14 +13,31 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class MainController extends AbstractController
 {
+
     /**
      * @Route("/", name="main")
      */
-    public function index(): Response
+    public function index(UserService $user): Response
     {
+        $logs =$user->getUsers();  
+
         $data = $this->getDoctrine()->getRepository(Crud::class)->findAll();
         return $this->render('main/index.html.twig', [
             'result' => $data,
+            'Logs' => $logs
+        ]);
+    }
+
+
+     /**
+     * @Route("/logs", name="logs")
+     */
+    public function logs(UserService $user): Response
+    {
+        $logs =$user->getUsers();  
+
+        return $this->render('main/logs.html.twig', [
+            'Logs' => $logs
         ]);
     }
 
