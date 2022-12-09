@@ -4,8 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Crud;
 use App\Entity\Logs;
+use App\Entity\Student;
 use App\Form\CrudType;
 use App\Services\UserService;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -13,6 +16,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class MainController extends AbstractController
 {
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
 
     /**
      * @Route("/", name="main")
@@ -129,4 +138,28 @@ class MainController extends AbstractController
             'form' => $form->createView()
         ]);
     }
+
+    /**
+     * @Route("/one-to-one-self-joining")
+     * @return Response
+     */
+
+    public function oneToOneSelfJoining(){
+
+        $mentor = new Student();
+        $this->entityManager->persist($mentor);
+
+        $newStudent = new Student();
+        $newStudent->setMentor($mentor);
+        $this->entityManager->persist($newStudent);
+
+        $this->entityManager->flush();
+
+        return new Response(sprintf('Mentor record created with id %d and new Student record created with id %d',
+        $mentor->getId(), $newStudent->getId()));
+
+
+    }
+
+
 }
